@@ -189,6 +189,45 @@
   }
   .save-btn:hover { opacity: 0.85; }
 
+  /* ── CARD: RAG / NOTE / PROGRESS ── */
+  .card-title-row { display: flex; align-items: center; gap: 8px; }
+  .rag-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+  .note-box {
+    background: var(--amber-light); border-radius: 6px;
+    padding: 8px 10px 8px 30px; font-size: 12px; color: var(--amber-dark);
+    line-height: 1.5; position: relative; word-break: break-word;
+  }
+  .note-box .ti { position: absolute; right: 9px; top: 9px; font-size: 13px; }
+  .progress-wrap { display: flex; flex-direction: column; gap: 5px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); }
+  .progress-label b { font-weight: 500; color: var(--text); }
+  .progress-track { height: 5px; background: var(--surface2); border-radius: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 20px; transition: width 0.3s; }
+  .nav-dot-wrap { position: relative; }
+  .nav-rag { width: 7px; height: 7px; border-radius: 50%; position: absolute; top: -2px; left: -2px; border: 1.5px solid var(--surface); }
+
+  /* ── DRAWER: RAG / PROGRESS / NOTE ── */
+  .rag-pills { display: flex; gap: 8px; }
+  .rag-pill {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 12px; padding: 8px 0; border-radius: var(--radius-sm);
+    cursor: pointer; border: 1.5px solid var(--border); background: var(--surface2);
+    transition: border-color 0.12s, background 0.12s;
+  }
+  .rag-pill .d { width: 9px; height: 9px; border-radius: 50%; }
+  .rag-pill.selected { border-color: rgba(0,0,0,0.35); background: var(--surface); }
+  .progress-edit { display: flex; align-items: center; gap: 12px; }
+  .progress-edit input[type=range] { flex: 1; accent-color: var(--purple); }
+  .progress-val { font-size: 13px; font-weight: 500; min-width: 38px; text-align: left; }
+  .note-input {
+    width: 100%; font-size: 13px; padding: 9px 12px; line-height: 1.5;
+    border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm);
+    background: var(--surface2); color: var(--text);
+    font-family: inherit; resize: vertical; min-height: 64px;
+  }
+  .note-input:focus { outline: none; border-color: rgba(0,0,0,0.35); }
+  .char-count { font-size: 10px; color: var(--text-faint); text-align: left; margin-top: 4px; }
+
   /* ── SPLIT VIEW ── */
   .split-view { flex: 1; display: none; overflow: hidden; }
   .split-view.visible { display: flex; }
@@ -335,8 +374,31 @@
     </div>
 
     <div>
+      <div class="field-label">מצב כללי (רמזור)</div>
+      <div class="rag-pills" id="ragPills">
+        <span class="rag-pill" data-rag="green" onclick="selectRag('green')"><span class="d" style="background:#3A9E75"></span>תקין</span>
+        <span class="rag-pill" data-rag="amber" onclick="selectRag('amber')"><span class="d" style="background:#EF9F27"></span>סיכון</span>
+        <span class="rag-pill" data-rag="red"   onclick="selectRag('red')"><span class="d" style="background:#E24B4A"></span>בעיה</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="field-label">התקדמות</div>
+      <div class="progress-edit">
+        <input type="range" id="progressInput" min="0" max="100" step="5" value="0" oninput="updateProgressVal()">
+        <span class="progress-val" id="progressVal">0%</span>
+      </div>
+    </div>
+
+    <div>
       <div class="field-label">תאריך / יעד</div>
       <input class="date-input" id="dateInput" type="text" placeholder="לדוג׳: Q3 2026 / ספטמבר 2026">
+    </div>
+
+    <div>
+      <div class="field-label">פתק — מה קורה עכשיו?</div>
+      <textarea class="note-input" id="noteInput" maxlength="200" placeholder="לדוג׳: ממתינים לאישור תקציב, צפוי עד סוף יולי" oninput="updateCharCount()"></textarea>
+      <div class="char-count" id="charCount">0 / 200</div>
     </div>
 
     <button class="save-btn" onclick="saveEdit()">
@@ -354,6 +416,13 @@
     'בהמתנה': { bg: '#FAEEDA', color: '#633806', dot: '#BA7517' },
   };
 
+  const RAG_MAP = {
+    'green':  { color: '#3A9E75', label: 'תקין' },
+    'amber':  { color: '#EF9F27', label: 'סיכון' },
+    'red':    { color: '#E24B4A', label: 'בעיה' },
+  };
+  const PROGRESS_COLOR = '#7F77DD';
+
   const PROJECTS_DEFAULT = [
     {
       id: 0,
@@ -367,6 +436,7 @@
       url: 'https://sivanassif.github.io/DBProject/',
       display: 'sivanassif.github.io/DBProject/',
       navDesc: 'ניהול בסיס נתונים',
+      rag: 'green', progress: 60, note: '', updatedAt: null,
     },
     {
       id: 1,
@@ -380,6 +450,7 @@
       url: 'https://erp-agent-plan.vercel.app/',
       display: 'erp-agent-plan.vercel.app',
       navDesc: '6 סוכני AI לתפעול',
+      rag: 'amber', progress: 25, note: '', updatedAt: null,
     },
     {
       id: 2,
@@ -393,6 +464,7 @@
       url: 'https://sivanassif.github.io/TBLite/#s1',
       display: 'sivanassif.github.io/TBLite',
       navDesc: 'מערכת ניהול תיירות',
+      rag: 'green', progress: 90, note: '', updatedAt: null,
     },
   ];
 
@@ -404,7 +476,14 @@
         const parsed = JSON.parse(saved);
         PROJECTS_DEFAULT.forEach(p => {
           const s = parsed[p.id];
-          if (s) { p.status = s.status; p.date = s.date; }
+          if (s) {
+            if (s.status !== undefined) p.status = s.status;
+            if (s.date !== undefined) p.date = s.date;
+            if (s.rag !== undefined) p.rag = s.rag;
+            if (s.progress !== undefined) p.progress = s.progress;
+            if (s.note !== undefined) p.note = s.note;
+            if (s.updatedAt !== undefined) p.updatedAt = s.updatedAt;
+          }
         });
       }
     } catch(e) {}
@@ -412,13 +491,37 @@
 
   function saveProjects() {
     const data = {};
-    PROJECTS_DEFAULT.forEach(p => { data[p.id] = { status: p.status, date: p.date }; });
+    PROJECTS_DEFAULT.forEach(p => {
+      data[p.id] = { status: p.status, date: p.date, rag: p.rag, progress: p.progress, note: p.note, updatedAt: p.updatedAt };
+    });
     localStorage.setItem('sivan_projects', JSON.stringify(data));
   }
 
   let currentProject = 0;
   let editingId = null;
   let selectedStatus = null;
+  let selectedRag = null;
+
+  // ── RELATIVE TIME ──
+  function relTime(ts) {
+    if (!ts) return null;
+    const diff = Date.now() - ts;
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'עכשיו';
+    if (mins < 60) return `לפני ${mins} דק׳`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `לפני ${hrs} שע׳`;
+    const days = Math.floor(hrs / 24);
+    if (days === 1) return 'אתמול';
+    if (days < 30) return `לפני ${days} ימים`;
+    const d = new Date(ts);
+    return d.toLocaleDateString('he-IL', { day: 'numeric', month: 'short' });
+  }
+
+  function escapeHtml(s) {
+    return (s || '').replace(/[&<>"']/g, c =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
 
   // ── RENDER ──
   function renderCards() {
@@ -426,6 +529,8 @@
     grid.innerHTML = '';
     PROJECTS_DEFAULT.forEach(p => {
       const st = STATUS_MAP[p.status] || STATUS_MAP['בפיתוח'];
+      const rag = RAG_MAP[p.rag] || RAG_MAP['green'];
+      const rel = relTime(p.updatedAt);
       const card = document.createElement('div');
       card.className = 'proj-card';
       card.innerHTML = `
@@ -439,12 +544,21 @@
           <span class="badge" style="background:${st.bg};color:${st.color}">${p.status}</span>
         </div>
         <div>
-          <div class="card-title">${p.name}</div>
-          <div class="card-desc">${p.desc}</div>
+          <div class="card-title-row">
+            <span class="rag-dot" style="background:${rag.color}" title="${rag.label}"></span>
+            <div class="card-title">${p.name}</div>
+          </div>
+          <div class="card-desc" style="margin-top:4px">${p.desc}</div>
+        </div>
+        ${p.note ? `<div class="note-box"><i class="ti ti-pin"></i>${escapeHtml(p.note)}</div>` : ''}
+        <div class="progress-wrap">
+          <div class="progress-label"><span>התקדמות</span><b>${p.progress}%</b></div>
+          <div class="progress-track"><div class="progress-fill" style="width:${p.progress}%;background:${PROGRESS_COLOR}"></div></div>
         </div>
         <div class="card-meta">
           <div class="meta-row"><i class="ti ti-calendar"></i>${p.date}</div>
           <div class="meta-row"><i class="ti ti-world"></i>${p.display}</div>
+          ${rel ? `<div class="meta-row"><i class="ti ti-clock"></i>עודכן ${rel}</div>` : ''}
         </div>
         <a class="open-btn" href="${p.url}" target="_blank">
           <i class="ti ti-external-link"></i>פתח פרויקט
@@ -463,9 +577,13 @@
       item.className = 'nav-item' + (i === currentProject ? ' active' : '');
       item.id = `nav-${i}`;
       item.onclick = () => selectProject(i);
+      const rag = RAG_MAP[p.rag] || RAG_MAP['green'];
       item.innerHTML = `
         <div class="nav-item-top">
-          <span class="nav-dot" style="background:${st.dot}"></span>
+          <span class="nav-dot-wrap">
+            <span class="nav-dot" style="background:${st.dot}"></span>
+            <span class="nav-rag" style="background:${rag.color}"></span>
+          </span>
           <span class="nav-title">${p.name}</span>
         </div>
         <div class="nav-desc">${p.navDesc}</div>
@@ -523,12 +641,36 @@
     editingId = id;
     const p = PROJECTS_DEFAULT[id];
     selectedStatus = p.status;
+    selectedRag = p.rag;
     document.getElementById('drawerProjectName').textContent = p.name;
     document.getElementById('dateInput').value = p.date;
     document.querySelectorAll('.status-pill').forEach(el => {
       el.classList.toggle('selected', el.dataset.status === p.status);
     });
+    document.querySelectorAll('.rag-pill').forEach(el => {
+      el.classList.toggle('selected', el.dataset.rag === p.rag);
+    });
+    document.getElementById('progressInput').value = p.progress;
+    document.getElementById('progressVal').textContent = p.progress + '%';
+    document.getElementById('noteInput').value = p.note || '';
+    updateCharCount();
     document.getElementById('drawerOverlay').classList.add('open');
+  }
+
+  function selectRag(rag) {
+    selectedRag = rag;
+    document.querySelectorAll('.rag-pill').forEach(el =>
+      el.classList.toggle('selected', el.dataset.rag === rag));
+  }
+
+  function updateProgressVal() {
+    document.getElementById('progressVal').textContent =
+      document.getElementById('progressInput').value + '%';
+  }
+
+  function updateCharCount() {
+    const len = document.getElementById('noteInput').value.length;
+    document.getElementById('charCount').textContent = len + ' / 200';
   }
 
   function closeDrawer(e) {
@@ -536,7 +678,7 @@
   }
   function closeDrawerDirect() {
     document.getElementById('drawerOverlay').classList.remove('open');
-    editingId = null; selectedStatus = null;
+    editingId = null; selectedStatus = null; selectedRag = null;
   }
 
   function selectStatus(status) {
@@ -549,8 +691,12 @@
     if (editingId === null) return;
     const p = PROJECTS_DEFAULT[editingId];
     if (selectedStatus) p.status = selectedStatus;
+    if (selectedRag) p.rag = selectedRag;
+    p.progress = parseInt(document.getElementById('progressInput').value, 10);
+    p.note = document.getElementById('noteInput').value.trim();
     const dateVal = document.getElementById('dateInput').value.trim();
     if (dateVal) p.date = dateVal;
+    p.updatedAt = Date.now();
     saveProjects();
     render();
     closeDrawerDirect();
