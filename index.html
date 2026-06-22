@@ -26,6 +26,10 @@
     --blue: #378ADD;
     --blue-light: #E6F1FB;
     --blue-dark: #0C447C;
+    --green-light: #EAF3DE;
+    --green-dark: #27500A;
+    --amber-light: #FAEEDA;
+    --amber-dark: #633806;
     --radius: 12px;
     --radius-sm: 8px;
   }
@@ -53,342 +57,205 @@
     top: 0;
     z-index: 100;
   }
-
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
+  .header-left { display: flex; align-items: center; gap: 12px; }
   .avatar {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    background: var(--purple-light);
-    color: var(--purple-dark);
-    font-size: 13px;
-    font-weight: 500;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--purple-light); color: var(--purple-dark);
+    font-size: 13px; font-weight: 500;
     display: flex; align-items: center; justify-content: center;
   }
-
   .header-title { font-size: 15px; font-weight: 500; }
   .header-org { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
-
   .header-right { display: flex; align-items: center; gap: 8px; }
-
   .date-chip {
-    font-size: 12px;
-    color: var(--text-muted);
-    padding: 4px 10px;
-    background: var(--surface2);
-    border-radius: 20px;
-    border: 0.5px solid var(--border);
+    font-size: 12px; color: var(--text-muted);
+    padding: 4px 10px; background: var(--surface2);
+    border-radius: 20px; border: 0.5px solid var(--border);
   }
 
   /* ── VIEW TOGGLE ── */
   .view-toggle {
-    display: flex;
-    background: var(--surface2);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 3px;
-    gap: 2px;
+    display: flex; background: var(--surface2);
+    border: 0.5px solid var(--border); border-radius: var(--radius-sm);
+    padding: 3px; gap: 2px;
   }
-
   .toggle-btn {
-    width: 30px; height: 26px;
-    border: none;
-    background: transparent;
-    border-radius: 6px;
-    cursor: pointer;
-    color: var(--text-muted);
+    width: 30px; height: 26px; border: none; background: transparent;
+    border-radius: 6px; cursor: pointer; color: var(--text-muted);
     display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-    transition: background 0.15s, color 0.15s;
+    font-size: 16px; transition: background 0.15s, color 0.15s;
   }
-
   .toggle-btn.active {
-    background: var(--surface);
-    color: var(--text);
+    background: var(--surface); color: var(--text);
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
 
   /* ── CARDS VIEW ── */
-  .cards-view {
-    flex: 1;
-    padding: 28px 32px;
-    display: none;
-  }
-
+  .cards-view { flex: 1; padding: 28px 32px; display: none; }
   .cards-view.visible { display: block; }
-
   .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    max-width: 960px;
-    margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; max-width: 960px; margin: 0 auto;
   }
-
   .proj-card {
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    display: flex; flex-direction: column; gap: 14px;
     transition: box-shadow 0.2s, transform 0.2s;
+    position: relative;
   }
-
-  .proj-card:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    transform: translateY(-2px);
-  }
-
+  .proj-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-2px); }
   .card-top { display: flex; align-items: flex-start; justify-content: space-between; }
-
   .card-icon {
-    width: 40px; height: 40px;
-    border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
+    width: 40px; height: 40px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
   }
-
-  .badge {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 3px 9px;
-    border-radius: 20px;
-  }
-
+  .badge { font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 20px; }
   .card-title { font-size: 15px; font-weight: 500; }
-
-  .card-desc {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.55;
-    margin-top: 4px;
-  }
-
+  .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; margin-top: 4px; }
   .card-meta {
-    border-top: 0.5px solid var(--border);
-    padding-top: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    border-top: 0.5px solid var(--border); padding-top: 12px;
+    display: flex; flex-direction: column; gap: 6px;
   }
-
-  .meta-row {
-    display: flex; align-items: center; gap: 7px;
-    font-size: 12px; color: var(--text-muted);
-  }
-
+  .meta-row { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-muted); }
   .meta-row i { font-size: 14px; }
-
   .open-btn {
     display: flex; align-items: center; justify-content: center; gap: 6px;
-    font-size: 13px;
-    padding: 9px 0;
-    border: 0.5px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    cursor: pointer;
-    background: var(--surface2);
-    text-decoration: none;
-    margin-top: auto;
-    transition: background 0.15s;
-    font-family: inherit;
-    font-weight: 400;
+    font-size: 13px; padding: 9px 0;
+    border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm);
+    color: var(--text); cursor: pointer; background: var(--surface2);
+    text-decoration: none; margin-top: auto;
+    transition: background 0.15s; font-family: inherit; font-weight: 400;
   }
-
   .open-btn:hover { background: var(--bg); }
 
+  /* ── EDIT FAB ── */
+  .edit-fab {
+    position: absolute; top: 12px; left: 12px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--surface2); border: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text-muted); font-size: 13px;
+    opacity: 0; transition: opacity 0.15s;
+    z-index: 2;
+  }
+  .proj-card:hover .edit-fab { opacity: 1; }
+
+  /* ── EDIT DRAWER ── */
+  .drawer-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.18);
+    z-index: 200; display: none; align-items: flex-end; justify-content: center;
+  }
+  .drawer-overlay.open { display: flex; }
+  .drawer {
+    background: var(--surface); border-radius: var(--radius) var(--radius) 0 0;
+    border: 0.5px solid var(--border); padding: 20px 24px 28px;
+    width: 100%; max-width: 480px;
+    display: flex; flex-direction: column; gap: 16px;
+    animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .drawer-header { display: flex; align-items: center; justify-content: space-between; }
+  .drawer-title { font-size: 14px; font-weight: 500; }
+  .drawer-project-name { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .drawer-close {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--surface2); border: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text-muted); font-size: 13px;
+  }
+  .field-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+  .status-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .status-pill {
+    font-size: 12px; font-weight: 500; padding: 5px 14px;
+    border-radius: 20px; cursor: pointer;
+    border: 1.5px solid transparent; transition: border-color 0.12s;
+  }
+  .status-pill.selected { border-color: rgba(0,0,0,0.3); }
+  .date-input {
+    width: 100%; font-size: 13px; padding: 8px 12px;
+    border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm);
+    background: var(--surface2); color: var(--text);
+    font-family: inherit;
+  }
+  .date-input:focus { outline: none; border-color: rgba(0,0,0,0.35); }
+  .save-btn {
+    font-size: 13px; padding: 10px 0;
+    border-radius: var(--radius-sm); background: var(--text);
+    color: var(--surface); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: inherit; font-weight: 500;
+    transition: opacity 0.15s;
+  }
+  .save-btn:hover { opacity: 0.85; }
+
   /* ── SPLIT VIEW ── */
-  .split-view {
-    flex: 1;
-    display: none;
-    overflow: hidden;
-  }
-
+  .split-view { flex: 1; display: none; overflow: hidden; }
   .split-view.visible { display: flex; }
-
   .sidebar {
-    width: 240px;
-    flex-shrink: 0;
-    background: var(--surface);
+    width: 240px; flex-shrink: 0; background: var(--surface);
     border-left: 0.5px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
+    display: flex; flex-direction: column; overflow-y: auto;
   }
-
   .sidebar-section-label {
-    font-size: 10px;
-    color: var(--text-faint);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
+    font-size: 10px; color: var(--text-faint);
+    text-transform: uppercase; letter-spacing: 0.07em;
     padding: 16px 16px 8px;
   }
-
   .nav-item {
-    margin: 3px 8px;
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    cursor: pointer;
-    transition: background 0.15s;
-    border: 0.5px solid transparent;
+    margin: 3px 8px; border-radius: var(--radius-sm);
+    padding: 10px 12px; cursor: pointer;
+    transition: background 0.15s; border: 0.5px solid transparent;
   }
-
   .nav-item:hover { background: var(--surface2); }
-
-  .nav-item.active {
-    background: var(--surface2);
-    border-color: var(--border);
-  }
-
+  .nav-item.active { background: var(--surface2); border-color: var(--border); }
   .nav-item-top { display: flex; align-items: center; gap: 8px; }
-
   .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
   .nav-title { font-size: 13px; font-weight: 500; }
-
   .nav-desc { font-size: 11px; color: var(--text-muted); margin-top: 3px; padding-right: 16px; }
-
-  .nav-badge {
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 20px;
-    margin-top: 6px;
-    display: inline-block;
-  }
+  .nav-badge { font-size: 10px; padding: 2px 7px; border-radius: 20px; margin-top: 6px; display: inline-block; }
 
   /* ── MAIN PANEL ── */
-  .main-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    min-width: 0;
-  }
-
+  .main-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
   .browser-bar {
-    height: 44px;
-    background: var(--surface);
+    height: 44px; background: var(--surface);
     border-bottom: 0.5px solid var(--border);
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    gap: 8px;
-    flex-shrink: 0;
+    display: flex; align-items: center; padding: 0 12px; gap: 8px; flex-shrink: 0;
   }
-
-  .nav-btns { display: flex; gap: 4px; }
-
   .nav-btn {
-    width: 28px; height: 28px;
-    border: none;
-    background: transparent;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    color: var(--text-muted);
+    width: 28px; height: 28px; border: none; background: transparent;
+    border-radius: var(--radius-sm); cursor: pointer; color: var(--text-muted);
     display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
-    transition: background 0.12s;
+    font-size: 15px; transition: background 0.12s;
   }
-
   .nav-btn:hover { background: var(--surface2); }
-
   .url-bar {
-    flex: 1;
-    background: var(--surface2);
-    border: 0.5px solid var(--border);
-    border-radius: 20px;
-    padding: 5px 14px;
-    font-size: 12px;
-    color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    flex: 1; background: var(--surface2); border: 0.5px solid var(--border);
+    border-radius: 20px; padding: 5px 14px; font-size: 12px;
+    color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-
   .browser-action {
-    width: 28px; height: 28px;
-    border: 0.5px solid var(--border);
-    background: var(--surface2);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    color: var(--text-muted);
+    width: 28px; height: 28px; border: 0.5px solid var(--border);
+    background: var(--surface2); border-radius: var(--radius-sm);
+    cursor: pointer; color: var(--text-muted);
     display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
-    transition: background 0.12s;
-    text-decoration: none;
+    font-size: 15px; transition: background 0.12s; text-decoration: none;
   }
-
   .browser-action:hover { background: var(--bg); color: var(--text); }
-
-  .iframe-area {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .iframe-area iframe {
-    width: 100%; height: 100%;
-    border: none;
-    display: block;
-  }
-
-  .iframe-fallback {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    background: var(--surface2);
-    display: none;
-  }
-
-  .fallback-icon { font-size: 36px; color: var(--text-faint); }
-  .fallback-text { font-size: 14px; color: var(--text-muted); }
-  .fallback-btn {
-    font-size: 13px;
-    padding: 8px 18px;
-    border: 0.5px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-    color: var(--text);
-    cursor: pointer;
-    text-decoration: none;
-    display: flex; align-items: center; gap: 6px;
-  }
-
+  .iframe-area { flex: 1; position: relative; overflow: hidden; }
+  .iframe-area iframe { width: 100%; height: 100%; border: none; display: block; }
   .loading-overlay {
-    position: absolute;
-    inset: 0;
-    background: var(--surface2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    z-index: 10;
-    transition: opacity 0.3s;
+    position: absolute; inset: 0; background: var(--surface2);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; z-index: 10; transition: opacity 0.3s;
   }
-
   .loading-overlay.hidden { opacity: 0; pointer-events: none; }
-
   .spinner {
-    width: 28px; height: 28px;
-    border: 2px solid var(--border);
-    border-top-color: var(--text-muted);
-    border-radius: 50%;
+    width: 28px; height: 28px; border: 2px solid var(--border);
+    border-top-color: var(--text-muted); border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .loading-text { font-size: 13px; color: var(--text-muted); }
 </style>
 </head>
@@ -418,114 +285,20 @@
 
 <!-- CARDS VIEW -->
 <div class="cards-view visible" id="cardsView">
-  <div class="cards-grid">
-
-    <div class="proj-card">
-      <div class="card-top">
-        <div class="card-icon" style="background:var(--teal-light)">
-          <i class="ti ti-database" style="color:var(--teal-dark)"></i>
-        </div>
-        <span class="badge" style="background:var(--teal-light);color:var(--teal-dark)">בפיתוח</span>
-      </div>
-      <div>
-        <div class="card-title">DB Project</div>
-        <div class="card-desc">ניהול ועיצוב מסד נתונים — ERD, שאילתות, תיעוד מבנה הנתונים</div>
-      </div>
-      <div class="card-meta">
-        <div class="meta-row"><i class="ti ti-calendar"></i>עדכון: יוני 2026</div>
-        <div class="meta-row"><i class="ti ti-world"></i>sivanassif.github.io/DBProject</div>
-      </div>
-      <a class="open-btn" href="https://sivanassif.github.io/DBProject/" target="_blank">
-        <i class="ti ti-external-link"></i>פתח פרויקט
-      </a>
-    </div>
-
-    <div class="proj-card">
-      <div class="card-top">
-        <div class="card-icon" style="background:var(--purple-light)">
-          <i class="ti ti-robot" style="color:var(--purple-dark)"></i>
-        </div>
-        <span class="badge" style="background:var(--purple-light);color:var(--purple-dark)">תכנון</span>
-      </div>
-      <div>
-        <div class="card-title">ERP AI Agents</div>
-        <div class="card-desc">6 סוכני AI לייעול תהליכי ERP ב-TravelBooster — Q3–Q4 2026</div>
-      </div>
-      <div class="card-meta">
-        <div class="meta-row"><i class="ti ti-calendar"></i>יעד: Q3–Q4 2026</div>
-        <div class="meta-row"><i class="ti ti-world"></i>erp-agent-plan.vercel.app</div>
-      </div>
-      <a class="open-btn" href="https://erp-agent-plan.vercel.app/" target="_blank">
-        <i class="ti ti-external-link"></i>פתח פרויקט
-      </a>
-    </div>
-
-    <div class="proj-card">
-      <div class="card-top">
-        <div class="card-icon" style="background:var(--blue-light)">
-          <i class="ti ti-plane" style="color:var(--blue-dark)"></i>
-        </div>
-        <span class="badge" style="background:var(--blue-light);color:var(--blue-dark)">הדגמה</span>
-      </div>
-      <div>
-        <div class="card-title">TBLite</div>
-        <div class="card-desc">מערכת ניהול תיירות קלת משקל — ממשק הדגמה ויז'ואלי</div>
-      </div>
-      <div class="card-meta">
-        <div class="meta-row"><i class="ti ti-calendar"></i>עדכון: יוני 2026</div>
-        <div class="meta-row"><i class="ti ti-world"></i>sivanassif.github.io/TBLite</div>
-      </div>
-      <a class="open-btn" href="https://sivanassif.github.io/TBLite/#s1" target="_blank">
-        <i class="ti ti-external-link"></i>פתח פרויקט
-      </a>
-    </div>
-
-  </div>
+  <div class="cards-grid" id="cardsGrid"></div>
 </div>
 
 <!-- SPLIT VIEW -->
 <div class="split-view" id="splitView">
-
-  <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="sidebar-section-label">פרויקטים פעילים</div>
-
-    <div class="nav-item active" id="nav-0" onclick="selectProject(0)">
-      <div class="nav-item-top">
-        <span class="nav-dot" style="background:var(--teal)"></span>
-        <span class="nav-title">DB Project</span>
-      </div>
-      <div class="nav-desc">ניהול בסיס נתונים</div>
-      <span class="nav-badge" style="background:var(--teal-light);color:var(--teal-dark)">בפיתוח</span>
-    </div>
-
-    <div class="nav-item" id="nav-1" onclick="selectProject(1)">
-      <div class="nav-item-top">
-        <span class="nav-dot" style="background:var(--purple)"></span>
-        <span class="nav-title">ERP AI Agents</span>
-      </div>
-      <div class="nav-desc">6 סוכני AI לתפעול</div>
-      <span class="nav-badge" style="background:var(--purple-light);color:var(--purple-dark)">תכנון</span>
-    </div>
-
-    <div class="nav-item" id="nav-2" onclick="selectProject(2)">
-      <div class="nav-item-top">
-        <span class="nav-dot" style="background:var(--blue)"></span>
-        <span class="nav-title">TBLite</span>
-      </div>
-      <div class="nav-desc">מערכת ניהול תיירות</div>
-      <span class="nav-badge" style="background:var(--blue-light);color:var(--blue-dark)">הדגמה</span>
-    </div>
+    <div id="sidebarNav"></div>
   </div>
-
-  <!-- MAIN PANEL -->
   <div class="main-panel">
     <div class="browser-bar">
-      <div class="nav-btns">
-        <button class="nav-btn" onclick="reloadIframe()" title="רענן"><i class="ti ti-refresh"></i></button>
-      </div>
-      <div class="url-bar" id="urlBar">sivanassif.github.io/DBProject/</div>
-      <a class="browser-action" id="openLink" href="https://sivanassif.github.io/DBProject/" target="_blank" title="פתח בחלון חדש">
+      <button class="nav-btn" onclick="reloadIframe()" title="רענן"><i class="ti ti-refresh"></i></button>
+      <div class="url-bar" id="urlBar"></div>
+      <a class="browser-action" id="openLink" href="#" target="_blank" title="פתח בחלון חדש">
         <i class="ti ti-external-link"></i>
       </a>
     </div>
@@ -534,100 +307,267 @@
         <div class="spinner"></div>
         <div class="loading-text">טוען...</div>
       </div>
-      <iframe id="mainIframe"
-        src="https://sivanassif.github.io/DBProject/"
-        onload="onIframeLoad()"
-        onerror="onIframeError()">
-      </iframe>
+      <iframe id="mainIframe" onload="onIframeLoad()" onerror="onIframeError()"></iframe>
     </div>
   </div>
+</div>
 
+<!-- EDIT DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer(event)">
+  <div class="drawer">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-title">עריכת פרויקט</div>
+        <div class="drawer-project-name" id="drawerProjectName"></div>
+      </div>
+      <div class="drawer-close" onclick="closeDrawerDirect()"><i class="ti ti-x"></i></div>
+    </div>
+
+    <div>
+      <div class="field-label">סטטוס</div>
+      <div class="status-pills" id="statusPills">
+        <span class="status-pill" data-status="בפיתוח" style="background:#E1F5EE;color:#0F6E56" onclick="selectStatus('בפיתוח')">בפיתוח</span>
+        <span class="status-pill" data-status="תכנון"  style="background:#EEEDFE;color:#3C3489" onclick="selectStatus('תכנון')">תכנון</span>
+        <span class="status-pill" data-status="הדגמה"  style="background:#E6F1FB;color:#0C447C" onclick="selectStatus('הדגמה')">הדגמה</span>
+        <span class="status-pill" data-status="הושלם"  style="background:#EAF3DE;color:#27500A" onclick="selectStatus('הושלם')">הושלם</span>
+        <span class="status-pill" data-status="בהמתנה" style="background:#FAEEDA;color:#633806" onclick="selectStatus('בהמתנה')">בהמתנה</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="field-label">תאריך / יעד</div>
+      <input class="date-input" id="dateInput" type="text" placeholder="לדוג׳: Q3 2026 / ספטמבר 2026">
+    </div>
+
+    <button class="save-btn" onclick="saveEdit()">
+      <i class="ti ti-check" style="font-size:14px"></i>שמור שינויים
+    </button>
+  </div>
 </div>
 
 <script>
-  const projects = [
+  const STATUS_MAP = {
+    'בפיתוח': { bg: '#E1F5EE', color: '#0F6E56', dot: '#1D9E75' },
+    'תכנון':  { bg: '#EEEDFE', color: '#3C3489', dot: '#7F77DD' },
+    'הדגמה':  { bg: '#E6F1FB', color: '#0C447C', dot: '#378ADD' },
+    'הושלם':  { bg: '#EAF3DE', color: '#27500A', dot: '#639922' },
+    'בהמתנה': { bg: '#FAEEDA', color: '#633806', dot: '#BA7517' },
+  };
+
+  const PROJECTS_DEFAULT = [
     {
+      id: 0,
+      name: 'DB Project',
+      desc: 'ניהול ועיצוב מסד נתונים — ERD, שאילתות, תיעוד מבנה הנתונים',
+      icon: 'ti-database',
+      iconColorVar: '--teal-dark',
+      iconBgVar: '--teal-light',
+      status: 'בפיתוח',
+      date: 'עדכון: יוני 2026',
       url: 'https://sivanassif.github.io/DBProject/',
-      display: 'sivanassif.github.io/DBProject/'
+      display: 'sivanassif.github.io/DBProject/',
+      navDesc: 'ניהול בסיס נתונים',
     },
     {
+      id: 1,
+      name: 'ERP AI Agents',
+      desc: '6 סוכני AI לייעול תהליכי ERP ב-TravelBooster',
+      icon: 'ti-robot',
+      iconColorVar: '--purple-dark',
+      iconBgVar: '--purple-light',
+      status: 'תכנון',
+      date: 'יעד: Q3–Q4 2026',
       url: 'https://erp-agent-plan.vercel.app/',
-      display: 'erp-agent-plan.vercel.app'
+      display: 'erp-agent-plan.vercel.app',
+      navDesc: '6 סוכני AI לתפעול',
     },
     {
+      id: 2,
+      name: 'TBLite',
+      desc: 'מערכת ניהול תיירות קלת משקל — ממשק הדגמה ויז\'ואלי',
+      icon: 'ti-plane',
+      iconColorVar: '--blue-dark',
+      iconBgVar: '--blue-light',
+      status: 'הדגמה',
+      date: 'עדכון: יוני 2026',
       url: 'https://sivanassif.github.io/TBLite/#s1',
-      display: 'sivanassif.github.io/TBLite'
-    }
+      display: 'sivanassif.github.io/TBLite',
+      navDesc: 'מערכת ניהול תיירות',
+    },
   ];
 
+  // Load saved state from localStorage
+  function loadProjects() {
+    try {
+      const saved = localStorage.getItem('sivan_projects');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        PROJECTS_DEFAULT.forEach(p => {
+          const s = parsed[p.id];
+          if (s) { p.status = s.status; p.date = s.date; }
+        });
+      }
+    } catch(e) {}
+  }
+
+  function saveProjects() {
+    const data = {};
+    PROJECTS_DEFAULT.forEach(p => { data[p.id] = { status: p.status, date: p.date }; });
+    localStorage.setItem('sivan_projects', JSON.stringify(data));
+  }
+
   let currentProject = 0;
+  let editingId = null;
+  let selectedStatus = null;
 
-  // Date
+  // ── RENDER ──
+  function renderCards() {
+    const grid = document.getElementById('cardsGrid');
+    grid.innerHTML = '';
+    PROJECTS_DEFAULT.forEach(p => {
+      const st = STATUS_MAP[p.status] || STATUS_MAP['בפיתוח'];
+      const card = document.createElement('div');
+      card.className = 'proj-card';
+      card.innerHTML = `
+        <button class="edit-fab" onclick="openDrawer(${p.id})" title="ערוך">
+          <i class="ti ti-pencil"></i>
+        </button>
+        <div class="card-top">
+          <div class="card-icon" style="background:var(${p.iconBgVar})">
+            <i class="ti ${p.icon}" style="color:var(${p.iconColorVar})"></i>
+          </div>
+          <span class="badge" style="background:${st.bg};color:${st.color}">${p.status}</span>
+        </div>
+        <div>
+          <div class="card-title">${p.name}</div>
+          <div class="card-desc">${p.desc}</div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-row"><i class="ti ti-calendar"></i>${p.date}</div>
+          <div class="meta-row"><i class="ti ti-world"></i>${p.display}</div>
+        </div>
+        <a class="open-btn" href="${p.url}" target="_blank">
+          <i class="ti ti-external-link"></i>פתח פרויקט
+        </a>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function renderSidebar() {
+    const nav = document.getElementById('sidebarNav');
+    nav.innerHTML = '';
+    PROJECTS_DEFAULT.forEach((p, i) => {
+      const st = STATUS_MAP[p.status] || STATUS_MAP['בפיתוח'];
+      const item = document.createElement('div');
+      item.className = 'nav-item' + (i === currentProject ? ' active' : '');
+      item.id = `nav-${i}`;
+      item.onclick = () => selectProject(i);
+      item.innerHTML = `
+        <div class="nav-item-top">
+          <span class="nav-dot" style="background:${st.dot}"></span>
+          <span class="nav-title">${p.name}</span>
+        </div>
+        <div class="nav-desc">${p.navDesc}</div>
+        <span class="nav-badge" style="background:${st.bg};color:${st.color}">${p.status}</span>
+      `;
+      nav.appendChild(item);
+    });
+  }
+
+  function render() { renderCards(); renderSidebar(); }
+
+  // ── DATE ──
   const now = new Date();
-  const opts = { year: 'numeric', month: 'long', day: 'numeric' };
-  document.getElementById('dateChip').textContent = now.toLocaleDateString('he-IL', opts);
+  document.getElementById('dateChip').textContent =
+    now.toLocaleDateString('he-IL', { year: 'numeric', month: 'long', day: 'numeric' });
 
+  // ── VIEW ──
   function setView(view) {
     const cards = document.getElementById('cardsView');
     const split = document.getElementById('splitView');
-    const btnC = document.getElementById('btnCards');
-    const btnS = document.getElementById('btnSplit');
-
-    if (view === 'cards') {
-      cards.classList.add('visible');
-      split.classList.remove('visible');
-      btnC.classList.add('active');
-      btnS.classList.remove('active');
-    } else {
-      cards.classList.remove('visible');
-      split.classList.add('visible');
-      btnC.classList.remove('active');
-      btnS.classList.add('active');
-      selectProject(currentProject);
-    }
+    document.getElementById('btnCards').classList.toggle('active', view === 'cards');
+    document.getElementById('btnSplit').classList.toggle('active', view === 'split');
+    cards.classList.toggle('visible', view === 'cards');
+    split.classList.toggle('visible', view === 'split');
+    if (view === 'split') selectProject(currentProject);
   }
 
+  // ── SPLIT NAV ──
   function selectProject(idx) {
     currentProject = idx;
-    const p = projects[idx];
-
-    document.querySelectorAll('.nav-item').forEach((el, i) => {
-      el.classList.toggle('active', i === idx);
-    });
-
+    const p = PROJECTS_DEFAULT[idx];
+    document.querySelectorAll('.nav-item').forEach((el, i) =>
+      el.classList.toggle('active', i === idx));
     document.getElementById('urlBar').textContent = p.display;
     document.getElementById('openLink').href = p.url;
-
     const iframe = document.getElementById('mainIframe');
-    const overlay = document.getElementById('loadingOverlay');
-    overlay.classList.remove('hidden');
+    document.getElementById('loadingOverlay').classList.remove('hidden');
     iframe.src = p.url;
   }
 
   function onIframeLoad() {
-    const overlay = document.getElementById('loadingOverlay');
-    setTimeout(() => overlay.classList.add('hidden'), 400);
+    setTimeout(() => document.getElementById('loadingOverlay').classList.add('hidden'), 400);
   }
-
   function onIframeError() {
-    const overlay = document.getElementById('loadingOverlay');
-    overlay.classList.add('hidden');
+    document.getElementById('loadingOverlay').classList.add('hidden');
   }
-
   function reloadIframe() {
     const iframe = document.getElementById('mainIframe');
-    const overlay = document.getElementById('loadingOverlay');
-    overlay.classList.remove('hidden');
+    document.getElementById('loadingOverlay').classList.remove('hidden');
     iframe.src = iframe.src;
   }
 
-  // keyboard shortcuts: 1/2/3 to switch projects (in split view)
+  // ── EDIT DRAWER ──
+  function openDrawer(id) {
+    editingId = id;
+    const p = PROJECTS_DEFAULT[id];
+    selectedStatus = p.status;
+    document.getElementById('drawerProjectName').textContent = p.name;
+    document.getElementById('dateInput').value = p.date;
+    document.querySelectorAll('.status-pill').forEach(el => {
+      el.classList.toggle('selected', el.dataset.status === p.status);
+    });
+    document.getElementById('drawerOverlay').classList.add('open');
+  }
+
+  function closeDrawer(e) {
+    if (e.target === document.getElementById('drawerOverlay')) closeDrawerDirect();
+  }
+  function closeDrawerDirect() {
+    document.getElementById('drawerOverlay').classList.remove('open');
+    editingId = null; selectedStatus = null;
+  }
+
+  function selectStatus(status) {
+    selectedStatus = status;
+    document.querySelectorAll('.status-pill').forEach(el =>
+      el.classList.toggle('selected', el.dataset.status === status));
+  }
+
+  function saveEdit() {
+    if (editingId === null) return;
+    const p = PROJECTS_DEFAULT[editingId];
+    if (selectedStatus) p.status = selectedStatus;
+    const dateVal = document.getElementById('dateInput').value.trim();
+    if (dateVal) p.date = dateVal;
+    saveProjects();
+    render();
+    closeDrawerDirect();
+  }
+
+  // ── KEYBOARD ──
   document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDrawerDirect();
     if (['1','2','3'].includes(e.key) && !e.ctrlKey && !e.metaKey) {
-      const splitVisible = document.getElementById('splitView').classList.contains('visible');
-      if (splitVisible) selectProject(parseInt(e.key) - 1);
+      if (document.getElementById('splitView').classList.contains('visible'))
+        selectProject(parseInt(e.key) - 1);
     }
   });
+
+  // ── INIT ──
+  loadProjects();
+  render();
 </script>
 
 </body>
