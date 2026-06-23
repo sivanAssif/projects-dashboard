@@ -151,7 +151,7 @@
     position: fixed; top: 0; left: 0; height: 100%;
     background: var(--surface); border-left: 0.5px solid var(--border);
     box-shadow: 4px 0 24px rgba(0,0,0,0.10);
-    padding: 22px 24px 28px; width: 380px; max-width: 88vw;
+    padding: 22px 26px 28px; width: 520px; max-width: 92vw;
     display: flex; flex-direction: column; gap: 18px;
     overflow-y: auto;
     transform: translateX(-100%); transition: transform 0.26s cubic-bezier(0.4,0,0.2,1);
@@ -229,6 +229,50 @@
   }
   .note-input:focus { outline: none; border-color: rgba(0,0,0,0.35); }
   .char-count { font-size: 10px; color: var(--text-faint); text-align: left; margin-top: 4px; }
+
+  /* ── TASKS (in panel) ── */
+  .field-label { display: flex; align-items: center; justify-content: space-between; }
+  .tasks-counter { font-size: 11px; color: var(--text-faint); font-weight: 400; }
+  .task-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .task-check {
+    width: 19px; height: 19px; border-radius: 5px; flex-shrink: 0;
+    border: 1.5px solid var(--border-strong); background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: transparent; font-size: 12px;
+  }
+  .task-check.done { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .task-text {
+    flex: 1; min-width: 0; font-size: 13px; padding: 7px 11px;
+    border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm);
+    background: var(--surface2); color: var(--text); font-family: inherit;
+  }
+  .task-text:focus { outline: none; border-color: rgba(0,0,0,0.35); }
+  .task-text.done { text-decoration: line-through; color: var(--text-faint); }
+  .task-date {
+    width: 138px; flex-shrink: 0; font-size: 12px; padding: 6px 8px;
+    border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm);
+    background: var(--surface2); color: var(--text-muted); font-family: inherit;
+  }
+  .task-date:focus { outline: none; border-color: rgba(0,0,0,0.35); }
+  .task-date.overdue { color: #A32D2D; background: #FCEBEB; border-color: #F09595; }
+  .task-del {
+    width: 26px; height: 26px; flex-shrink: 0; border: none; background: transparent;
+    color: var(--text-faint); cursor: pointer; font-size: 15px;
+    display: flex; align-items: center; justify-content: center; border-radius: 6px;
+  }
+  .task-del:hover { background: var(--surface2); color: #A32D2D; }
+  .add-task {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
+    color: #534AB7; padding: 6px 2px; cursor: pointer; margin-top: 2px;
+  }
+  .add-task:hover { color: #3C3489; }
+  .tasks-empty { font-size: 12px; color: var(--text-faint); padding: 4px 2px 8px; }
+
+  /* ── TASKS (on card) ── */
+  .card-tasks { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-muted); }
+  .card-tasks .bar { flex: 1; height: 5px; background: var(--surface2); border-radius: 20px; overflow: hidden; }
+  .card-tasks .bar-fill { height: 100%; background: var(--teal); border-radius: 20px; }
+  .card-tasks .overdue-flag { color: #A32D2D; display: flex; align-items: center; gap: 3px; }
 
   /* ── SPLIT VIEW ── */
   .split-view { flex: 1; display: none; overflow: hidden; }
@@ -398,9 +442,18 @@
     </div>
 
     <div>
-      <div class="field-label">פתק — מה קורה עכשיו?</div>
-      <textarea class="note-input" id="noteInput" maxlength="200" placeholder="לדוג׳: ממתינים לאישור תקציב, צפוי עד סוף יולי" oninput="updateCharCount()"></textarea>
-      <div class="char-count" id="charCount">0 / 200</div>
+      <div class="field-label">הערות</div>
+      <textarea class="note-input" id="noteInput" maxlength="300" placeholder="לדוג׳: ממתינים לאישור תקציב, צפוי עד סוף יולי" oninput="updateCharCount()"></textarea>
+      <div class="char-count" id="charCount">0 / 300</div>
+    </div>
+
+    <div class="tasks-section">
+      <div class="field-label">
+        <span>משימות</span>
+        <span class="tasks-counter" id="tasksCounter"></span>
+      </div>
+      <div id="tasksList"></div>
+      <div class="add-task" onclick="addTaskRow()"><i class="ti ti-plus"></i>הוסף משימה</div>
     </div>
 
     <button class="save-btn" onclick="saveEdit()">
@@ -438,7 +491,7 @@
       url: 'https://sivanassif.github.io/DBProject/',
       display: 'sivanassif.github.io/DBProject/',
       navDesc: 'ניהול בסיס נתונים',
-      rag: 'green', progress: 60, note: '', updatedAt: null,
+      rag: 'green', progress: 60, note: '', updatedAt: null, tasks: [],
     },
     {
       id: 1,
@@ -452,7 +505,7 @@
       url: 'https://erp-agent-plan.vercel.app/',
       display: 'erp-agent-plan.vercel.app',
       navDesc: '6 סוכני AI לתפעול',
-      rag: 'amber', progress: 25, note: '', updatedAt: null,
+      rag: 'amber', progress: 25, note: '', updatedAt: null, tasks: [],
     },
     {
       id: 2,
@@ -466,7 +519,7 @@
       url: 'https://sivanassif.github.io/TBLite/#s1',
       display: 'sivanassif.github.io/TBLite',
       navDesc: 'מערכת ניהול תיירות',
-      rag: 'green', progress: 90, note: '', updatedAt: null,
+      rag: 'green', progress: 90, note: '', updatedAt: null, tasks: [],
     },
   ];
 
@@ -485,6 +538,7 @@
             if (s.progress !== undefined) p.progress = s.progress;
             if (s.note !== undefined) p.note = s.note;
             if (s.updatedAt !== undefined) p.updatedAt = s.updatedAt;
+            if (Array.isArray(s.tasks)) p.tasks = s.tasks;
           }
         });
       }
@@ -494,7 +548,7 @@
   function saveProjects() {
     const data = {};
     PROJECTS_DEFAULT.forEach(p => {
-      data[p.id] = { status: p.status, date: p.date, rag: p.rag, progress: p.progress, note: p.note, updatedAt: p.updatedAt };
+      data[p.id] = { status: p.status, date: p.date, rag: p.rag, progress: p.progress, note: p.note, updatedAt: p.updatedAt, tasks: p.tasks };
     });
     localStorage.setItem('sivan_projects', JSON.stringify(data));
   }
@@ -503,6 +557,7 @@
   let editingId = null;
   let selectedStatus = null;
   let selectedRag = null;
+  let editingTasks = [];
 
   // ── RELATIVE TIME ──
   function relTime(ts) {
@@ -523,6 +578,20 @@
   function escapeHtml(s) {
     return (s || '').replace(/[&<>"']/g, c =>
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function todayISO() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function isOverdue(task) {
+    return task.due && !task.done && task.due < todayISO();
+  }
+  function dueLabel(iso) {
+    if (!iso) return '';
+    const [y, m, d] = iso.split('-').map(Number);
+    const months = ['ינו','פבר','מרץ','אפר','מאי','יוני','יולי','אוג','ספט','אוק','נוב','דצמ'];
+    return `${d} ${months[m-1]}`;
   }
 
   // ── RENDER ──
@@ -553,6 +622,19 @@
           <div class="card-desc" style="margin-top:4px">${p.desc}</div>
         </div>
         ${p.note ? `<div class="note-box"><i class="ti ti-pin"></i>${escapeHtml(p.note)}</div>` : ''}
+        ${(() => {
+          const tasks = p.tasks || [];
+          if (!tasks.length) return '';
+          const done = tasks.filter(t => t.done).length;
+          const overdue = tasks.filter(isOverdue).length;
+          const pct = Math.round(done / tasks.length * 100);
+          return `<div class="card-tasks">
+            <i class="ti ti-checklist"></i>
+            <span>${done}/${tasks.length}</span>
+            <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
+            ${overdue ? `<span class="overdue-flag"><i class="ti ti-alert-triangle" style="font-size:13px"></i>${overdue}</span>` : ''}
+          </div>`;
+        })()}
         <div class="progress-wrap">
           <div class="progress-label"><span>התקדמות</span><b>${p.progress}%</b></div>
           <div class="progress-track"><div class="progress-fill" style="width:${p.progress}%;background:${PROGRESS_COLOR}"></div></div>
@@ -656,7 +738,49 @@
     document.getElementById('progressVal').textContent = p.progress + '%';
     document.getElementById('noteInput').value = p.note || '';
     updateCharCount();
+    editingTasks = (p.tasks || []).map(t => ({ text: t.text, done: !!t.done, due: t.due || '' }));
+    renderTaskRows();
     document.getElementById('drawerOverlay').classList.add('open');
+  }
+
+  // ── TASK EDITING ──
+  function renderTaskRows() {
+    const list = document.getElementById('tasksList');
+    list.innerHTML = '';
+    if (editingTasks.length === 0) {
+      list.innerHTML = '<div class="tasks-empty">אין משימות עדיין — לחצי "הוסף משימה".</div>';
+    }
+    editingTasks.forEach((t, i) => {
+      const row = document.createElement('div');
+      row.className = 'task-row';
+      const overdue = isOverdue(t) ? ' overdue' : '';
+      row.innerHTML = `
+        <div class="task-check${t.done ? ' done' : ''}" onclick="toggleTask(${i})"><i class="ti ti-check"></i></div>
+        <input class="task-text${t.done ? ' done' : ''}" type="text" value="${escapeHtml(t.text)}"
+               placeholder="תיאור המשימה" oninput="updateTaskText(${i}, this.value)">
+        <input class="task-date${overdue}" type="date" value="${t.due}" onchange="updateTaskDate(${i}, this.value)">
+        <button class="task-del" onclick="deleteTask(${i})" title="מחק"><i class="ti ti-trash"></i></button>
+      `;
+      list.appendChild(row);
+    });
+    updateTasksCounter();
+  }
+
+  function updateTasksCounter() {
+    const total = editingTasks.length;
+    const done = editingTasks.filter(t => t.done).length;
+    document.getElementById('tasksCounter').textContent = total ? `${done} / ${total} הושלמו` : '';
+  }
+
+  function updateTaskText(i, val) { editingTasks[i].text = val; }
+  function updateTaskDate(i, val) { editingTasks[i].due = val; renderTaskRows(); }
+  function toggleTask(i) { editingTasks[i].done = !editingTasks[i].done; renderTaskRows(); }
+  function deleteTask(i) { editingTasks.splice(i, 1); renderTaskRows(); }
+  function addTaskRow() {
+    editingTasks.push({ text: '', done: false, due: '' });
+    renderTaskRows();
+    const inputs = document.querySelectorAll('#tasksList .task-text');
+    if (inputs.length) inputs[inputs.length - 1].focus();
   }
 
   function selectRag(rag) {
@@ -680,7 +804,7 @@
   }
   function closeDrawerDirect() {
     document.getElementById('drawerOverlay').classList.remove('open');
-    editingId = null; selectedStatus = null; selectedRag = null;
+    editingId = null; selectedStatus = null; selectedRag = null; editingTasks = [];
   }
 
   function selectStatus(status) {
@@ -696,6 +820,9 @@
     if (selectedRag) p.rag = selectedRag;
     p.progress = parseInt(document.getElementById('progressInput').value, 10);
     p.note = document.getElementById('noteInput').value.trim();
+    p.tasks = editingTasks
+      .map(t => ({ text: (t.text || '').trim(), done: !!t.done, due: t.due || '' }))
+      .filter(t => t.text);
     const dateVal = document.getElementById('dateInput').value.trim();
     if (dateVal) p.date = dateVal;
     p.updatedAt = Date.now();
