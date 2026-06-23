@@ -151,7 +151,7 @@
     position: fixed; top: 0; left: 0; height: 100%;
     background: var(--surface); border-left: 0.5px solid var(--border);
     box-shadow: 4px 0 24px rgba(0,0,0,0.10);
-    padding: 22px 28px 28px; width: 680px; max-width: 94vw;
+    padding: 22px 30px 30px; width: 820px; max-width: 95vw;
     display: flex; flex-direction: column; gap: 18px;
     overflow-y: auto;
     transform: translateX(-100%); transition: transform 0.26s cubic-bezier(0.4,0,0.2,1);
@@ -290,12 +290,30 @@
     font-size: 12px; color: var(--text-faint); padding: 14px 2px;
     text-align: center; border: 0.5px dashed var(--border); border-radius: var(--radius-sm);
   }
+  .th-sev { width: 116px; }
+  .sev-select {
+    width: 100%; font-size: 12px; padding: 5px 6px; border-radius: 6px;
+    border: 0.5px solid transparent; background: transparent; color: var(--text);
+    font-family: inherit; cursor: pointer;
+  }
+  .sev-select:hover { background: var(--surface2); }
+  .sev-select:focus { outline: none; border-color: rgba(0,0,0,0.3); background: var(--surface); }
+  .sev-cell-high  { background: #FCEBEB; }
+  .sev-cell-med   { background: #FAEEDA; }
+  .sev-cell-low   { background: #EAF3DE; }
 
   /* ── TASKS (on card) ── */
   .card-tasks { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-muted); }
   .card-tasks .bar { flex: 1; height: 5px; background: var(--surface2); border-radius: 20px; overflow: hidden; }
   .card-tasks .bar-fill { height: 100%; background: var(--teal); border-radius: 20px; }
   .card-tasks .overdue-flag { color: #A32D2D; display: flex; align-items: center; gap: 3px; }
+  .card-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .card-chip {
+    display: inline-flex; align-items: center; gap: 4px; font-size: 11px;
+    padding: 3px 8px; border-radius: 20px; background: var(--surface2); color: var(--text-muted);
+  }
+  .card-chip i { font-size: 13px; }
+  .card-chip.danger { background: #FCEBEB; color: #A32D2D; }
 
   /* ── SPLIT VIEW ── */
   .split-view { flex: 1; display: none; overflow: hidden; }
@@ -479,6 +497,27 @@
       <div class="add-task" onclick="addTaskRow()"><i class="ti ti-plus"></i>הוסף משימה</div>
     </div>
 
+    <div class="tasks-section">
+      <div class="field-label"><span><i class="ti ti-arrow-ramp-right-2" style="font-size:14px;margin-left:5px"></i>תלויות</span></div>
+      <div id="depsList"></div>
+      <div class="add-task" onclick="addDepRow()"><i class="ti ti-plus"></i>הוסף תלות</div>
+    </div>
+
+    <div class="tasks-section">
+      <div class="field-label">
+        <span><i class="ti ti-flag" style="font-size:14px;margin-left:5px"></i>אבני דרך</span>
+        <span class="tasks-counter" id="milesCounter"></span>
+      </div>
+      <div id="milesList"></div>
+      <div class="add-task" onclick="addMileRow()"><i class="ti ti-plus"></i>הוסף אבן דרך</div>
+    </div>
+
+    <div class="tasks-section">
+      <div class="field-label"><span><i class="ti ti-alert-triangle" style="font-size:14px;margin-left:5px"></i>סיכונים</span></div>
+      <div id="risksList"></div>
+      <div class="add-task" onclick="addRiskRow()"><i class="ti ti-plus"></i>הוסף סיכון</div>
+    </div>
+
     <button class="save-btn" onclick="saveEdit()">
       <i class="ti ti-check" style="font-size:14px"></i>שמור שינויים
     </button>
@@ -514,7 +553,7 @@
       url: 'https://sivanassif.github.io/DBProject/',
       display: 'sivanassif.github.io/DBProject/',
       navDesc: 'ניהול בסיס נתונים',
-      rag: 'green', progress: 60, note: '', updatedAt: null, tasks: [],
+      rag: 'green', progress: 60, note: '', updatedAt: null, tasks: [], deps: [], milestones: [], risks: [],
     },
     {
       id: 1,
@@ -528,7 +567,7 @@
       url: 'https://erp-agent-plan.vercel.app/',
       display: 'erp-agent-plan.vercel.app',
       navDesc: '6 סוכני AI לתפעול',
-      rag: 'amber', progress: 25, note: '', updatedAt: null, tasks: [],
+      rag: 'amber', progress: 25, note: '', updatedAt: null, tasks: [], deps: [], milestones: [], risks: [],
     },
     {
       id: 2,
@@ -542,7 +581,7 @@
       url: 'https://sivanassif.github.io/TBLite/#s1',
       display: 'sivanassif.github.io/TBLite',
       navDesc: 'מערכת ניהול תיירות',
-      rag: 'green', progress: 90, note: '', updatedAt: null, tasks: [],
+      rag: 'green', progress: 90, note: '', updatedAt: null, tasks: [], deps: [], milestones: [], risks: [],
     },
   ];
 
@@ -562,6 +601,9 @@
             if (s.note !== undefined) p.note = s.note;
             if (s.updatedAt !== undefined) p.updatedAt = s.updatedAt;
             if (Array.isArray(s.tasks)) p.tasks = s.tasks;
+            if (Array.isArray(s.deps)) p.deps = s.deps;
+            if (Array.isArray(s.milestones)) p.milestones = s.milestones;
+            if (Array.isArray(s.risks)) p.risks = s.risks;
           }
         });
       }
@@ -571,7 +613,7 @@
   function saveProjects() {
     const data = {};
     PROJECTS_DEFAULT.forEach(p => {
-      data[p.id] = { status: p.status, date: p.date, rag: p.rag, progress: p.progress, note: p.note, updatedAt: p.updatedAt, tasks: p.tasks };
+      data[p.id] = { status: p.status, date: p.date, rag: p.rag, progress: p.progress, note: p.note, updatedAt: p.updatedAt, tasks: p.tasks, deps: p.deps, milestones: p.milestones, risks: p.risks };
     });
     localStorage.setItem('sivan_projects', JSON.stringify(data));
   }
@@ -581,6 +623,14 @@
   let selectedStatus = null;
   let selectedRag = null;
   let editingTasks = [];
+  let editingDeps = [];
+  let editingMiles = [];
+  let editingRisks = [];
+  const SEV_MAP = {
+    'high': { label: 'גבוה',  cls: 'sev-cell-high' },
+    'med':  { label: 'בינוני', cls: 'sev-cell-med' },
+    'low':  { label: 'נמוך',  cls: 'sev-cell-low' },
+  };
 
   // ── RELATIVE TIME ──
   function relTime(ts) {
@@ -657,6 +707,21 @@
             <div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>
             ${overdue ? `<span class="overdue-flag"><i class="ti ti-alert-triangle" style="font-size:13px"></i>${overdue}</span>` : ''}
           </div>`;
+        })()}
+        ${(() => {
+          const miles = p.milestones || [], deps = p.deps || [], risks = p.risks || [];
+          if (!miles.length && !deps.length && !risks.length) return '';
+          const chips = [];
+          if (miles.length) {
+            const md = miles.filter(m => m.done).length;
+            chips.push(`<span class="card-chip"><i class="ti ti-flag"></i>${md}/${miles.length} אבני דרך</span>`);
+          }
+          if (deps.length) chips.push(`<span class="card-chip"><i class="ti ti-arrow-ramp-right-2"></i>${deps.length} תלויות</span>`);
+          if (risks.length) {
+            const high = risks.filter(r => r.severity === 'high').length;
+            chips.push(`<span class="card-chip${high ? ' danger' : ''}"><i class="ti ti-alert-triangle"></i>${risks.length} סיכונים${high ? ` · ${high} גבוה` : ''}</span>`);
+          }
+          return `<div class="card-chips">${chips.join('')}</div>`;
         })()}
         <div class="progress-wrap">
           <div class="progress-label"><span>התקדמות</span><b>${p.progress}%</b></div>
@@ -762,7 +827,13 @@
     document.getElementById('noteInput').value = p.note || '';
     updateCharCount();
     editingTasks = (p.tasks || []).map(t => ({ text: t.text, done: !!t.done, due: t.due || '' }));
+    editingDeps = (p.deps || []).map(d => ({ giver: d.giver || '', need: d.need || '', due: d.due || '' }));
+    editingMiles = (p.milestones || []).map(m => ({ name: m.name || '', done: !!m.done, due: m.due || '' }));
+    editingRisks = (p.risks || []).map(r => ({ risk: r.risk || '', severity: r.severity || 'med', plan: r.plan || '' }));
     renderTaskRows();
+    renderDepRows();
+    renderMileRows();
+    renderRiskRows();
     document.getElementById('drawerOverlay').classList.add('open');
   }
 
@@ -815,6 +886,99 @@
     if (inputs.length) inputs[inputs.length - 1].focus();
   }
 
+  // ── DEPENDENCIES ──
+  function renderDepRows() {
+    const list = document.getElementById('depsList');
+    if (editingDeps.length === 0) {
+      list.innerHTML = '<div class="tasks-empty">אין תלויות — לחצי "הוסף תלות".</div>';
+      return;
+    }
+    const rows = editingDeps.map((d, i) => `
+      <tr>
+        <td><input class="task-text" type="text" value="${escapeHtml(d.giver)}" placeholder="גורם / מחלקה" oninput="editingDeps[${i}].giver=this.value"></td>
+        <td><input class="task-text" type="text" value="${escapeHtml(d.need)}" placeholder="מה נדרש?" oninput="editingDeps[${i}].need=this.value"></td>
+        <td><input class="task-date" type="date" value="${d.due}" onchange="editingDeps[${i}].due=this.value"></td>
+        <td><button class="task-del" onclick="deleteDep(${i})" title="מחק"><i class="ti ti-trash"></i></button></td>
+      </tr>`).join('');
+    list.innerHTML = `<table class="tasks-table"><thead><tr>
+        <th>גורם / מחלקה</th><th>מה נדרש</th><th class="th-date">עד מתי</th><th class="th-del"></th>
+      </tr></thead><tbody>${rows}</tbody></table>`;
+  }
+  function deleteDep(i) { editingDeps.splice(i, 1); renderDepRows(); }
+  function addDepRow() {
+    editingDeps.push({ giver: '', need: '', due: '' });
+    renderDepRows();
+    const inputs = document.querySelectorAll('#depsList .task-text');
+    if (inputs.length) inputs[inputs.length - 2].focus();
+  }
+
+  // ── MILESTONES ──
+  function renderMileRows() {
+    const list = document.getElementById('milesList');
+    if (editingMiles.length === 0) {
+      list.innerHTML = '<div class="tasks-empty">אין אבני דרך — לחצי "הוסף אבן דרך".</div>';
+      updateMilesCounter();
+      return;
+    }
+    const rows = editingMiles.map((m, i) => {
+      const overdue = (m.due && !m.done && m.due < todayISO()) ? ' overdue' : '';
+      return `
+      <tr>
+        <td class="th-check"><div class="task-check${m.done ? ' done' : ''}" onclick="toggleMile(${i})"><i class="ti ti-check"></i></div></td>
+        <td><input class="task-text${m.done ? ' done' : ''}" type="text" value="${escapeHtml(m.name)}" placeholder="אבן דרך" oninput="editingMiles[${i}].name=this.value"></td>
+        <td><input class="task-date${overdue}" type="date" value="${m.due}" onchange="editingMiles[${i}].due=this.value; renderMileRows()"></td>
+        <td><button class="task-del" onclick="deleteMile(${i})" title="מחק"><i class="ti ti-trash"></i></button></td>
+      </tr>`;
+    }).join('');
+    list.innerHTML = `<table class="tasks-table"><thead><tr>
+        <th class="th-check">✓</th><th>אבן דרך</th><th class="th-date">תאריך יעד</th><th class="th-del"></th>
+      </tr></thead><tbody>${rows}</tbody></table>`;
+    updateMilesCounter();
+  }
+  function updateMilesCounter() {
+    const total = editingMiles.length, done = editingMiles.filter(m => m.done).length;
+    document.getElementById('milesCounter').textContent = total ? `${done} / ${total} הושגו` : '';
+  }
+  function toggleMile(i) { editingMiles[i].done = !editingMiles[i].done; renderMileRows(); }
+  function deleteMile(i) { editingMiles.splice(i, 1); renderMileRows(); }
+  function addMileRow() {
+    editingMiles.push({ name: '', done: false, due: '' });
+    renderMileRows();
+    const inputs = document.querySelectorAll('#milesList .task-text');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }
+
+  // ── RISKS ──
+  function renderRiskRows() {
+    const list = document.getElementById('risksList');
+    if (editingRisks.length === 0) {
+      list.innerHTML = '<div class="tasks-empty">אין סיכונים — לחצי "הוסף סיכון".</div>';
+      return;
+    }
+    const rows = editingRisks.map((r, i) => {
+      const sev = SEV_MAP[r.severity] || SEV_MAP['med'];
+      const opts = ['high','med','low'].map(s =>
+        `<option value="${s}"${r.severity===s?' selected':''}>${SEV_MAP[s].label}</option>`).join('');
+      return `
+      <tr>
+        <td><input class="task-text" type="text" value="${escapeHtml(r.risk)}" placeholder="תיאור הסיכון" oninput="editingRisks[${i}].risk=this.value"></td>
+        <td class="${sev.cls}"><select class="sev-select" onchange="editingRisks[${i}].severity=this.value; renderRiskRows()">${opts}</select></td>
+        <td><input class="task-text" type="text" value="${escapeHtml(r.plan)}" placeholder="תוכנית מגירה" oninput="editingRisks[${i}].plan=this.value"></td>
+        <td><button class="task-del" onclick="deleteRisk(${i})" title="מחק"><i class="ti ti-trash"></i></button></td>
+      </tr>`;
+    }).join('');
+    list.innerHTML = `<table class="tasks-table"><thead><tr>
+        <th>הסיכון</th><th class="th-sev">חומרה</th><th>תוכנית מגירה</th><th class="th-del"></th>
+      </tr></thead><tbody>${rows}</tbody></table>`;
+  }
+  function deleteRisk(i) { editingRisks.splice(i, 1); renderRiskRows(); }
+  function addRiskRow() {
+    editingRisks.push({ risk: '', severity: 'med', plan: '' });
+    renderRiskRows();
+    const inputs = document.querySelectorAll('#risksList .task-text');
+    if (inputs.length) inputs[inputs.length - 2].focus();
+  }
+
   function selectRag(rag) {
     selectedRag = rag;
     document.querySelectorAll('.rag-pill').forEach(el =>
@@ -836,7 +1000,8 @@
   }
   function closeDrawerDirect() {
     document.getElementById('drawerOverlay').classList.remove('open');
-    editingId = null; selectedStatus = null; selectedRag = null; editingTasks = [];
+    editingId = null; selectedStatus = null; selectedRag = null;
+    editingTasks = []; editingDeps = []; editingMiles = []; editingRisks = [];
   }
 
   function selectStatus(status) {
@@ -855,6 +1020,15 @@
     p.tasks = editingTasks
       .map(t => ({ text: (t.text || '').trim(), done: !!t.done, due: t.due || '' }))
       .filter(t => t.text);
+    p.deps = editingDeps
+      .map(d => ({ giver: (d.giver||'').trim(), need: (d.need||'').trim(), due: d.due || '' }))
+      .filter(d => d.giver || d.need);
+    p.milestones = editingMiles
+      .map(m => ({ name: (m.name||'').trim(), done: !!m.done, due: m.due || '' }))
+      .filter(m => m.name);
+    p.risks = editingRisks
+      .map(r => ({ risk: (r.risk||'').trim(), severity: r.severity || 'med', plan: (r.plan||'').trim() }))
+      .filter(r => r.risk);
     const dateVal = document.getElementById('dateInput').value.trim();
     if (dateVal) p.date = dateVal;
     p.updatedAt = Date.now();
