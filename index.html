@@ -556,7 +556,7 @@
       iconColorVar: '--teal-dark',
       iconBgVar: '--teal-light',
       status: 'בפיתוח',
-      date: 'עדכון: יוני 2026',
+      date: 'יוני 2026',
       url: 'https://sivanassif.github.io/DBProject/',
       display: 'sivanassif.github.io/DBProject/',
       navDesc: 'ניהול בסיס נתונים',
@@ -570,7 +570,7 @@
       iconColorVar: '--purple-dark',
       iconBgVar: '--purple-light',
       status: 'תכנון',
-      date: 'יעד: Q3–Q4 2026',
+      date: 'Q3–Q4 2026',
       url: 'https://erp-agent-plan.vercel.app/',
       display: 'erp-agent-plan.vercel.app',
       navDesc: '6 סוכני AI לתפעול',
@@ -580,11 +580,11 @@
       id: 2,
       name: 'TBLite',
       desc: 'מערכת ניהול תיירות קלת משקל — ממשק הדגמה ויז\'ואלי',
-      icon: 'ti-plane',
+      icon: 'ti-layout-dashboard',
       iconColorVar: '--blue-dark',
       iconBgVar: '--blue-light',
       status: 'הדגמה',
-      date: 'עדכון: יוני 2026',
+      date: 'יוני 2026',
       url: 'https://sivanassif.github.io/TBLite/#s1',
       display: 'sivanassif.github.io/TBLite',
       navDesc: 'מערכת ניהול תיירות',
@@ -735,7 +735,7 @@
           <div class="progress-track"><div class="progress-fill" style="width:${p.progress}%;background:${PROGRESS_COLOR}"></div></div>
         </div>
         <div class="card-meta">
-          <div class="meta-row"><i class="ti ti-calendar"></i>${p.date}</div>
+          <div class="meta-row"><i class="ti ti-calendar"></i>יעד: ${escapeHtml(p.date)}</div>
           <div class="meta-row"><i class="ti ti-world"></i>${p.display}</div>
           <div class="meta-row"><i class="ti ti-clock"></i>${rel ? 'עודכן ' + rel : 'טרם עודכן'}</div>
         </div>
