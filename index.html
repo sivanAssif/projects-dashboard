@@ -151,7 +151,7 @@
     position: fixed; top: 0; left: 0; height: 100%;
     background: var(--surface); border-left: 0.5px solid var(--border);
     box-shadow: 4px 0 24px rgba(0,0,0,0.10);
-    padding: 22px 26px 28px; width: 520px; max-width: 92vw;
+    padding: 22px 28px 28px; width: 680px; max-width: 94vw;
     display: flex; flex-direction: column; gap: 18px;
     overflow-y: auto;
     transform: translateX(-100%); transition: transform 0.26s cubic-bezier(0.4,0,0.2,1);
@@ -233,40 +233,60 @@
   /* ── TASKS (in panel) ── */
   .field-label { display: flex; align-items: center; justify-content: space-between; }
   .tasks-counter { font-size: 11px; color: var(--text-faint); font-weight: 400; }
-  .task-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .tasks-table {
+    width: 100%; border-collapse: collapse;
+    border: 0.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden;
+  }
+  .tasks-table thead th {
+    font-size: 10px; font-weight: 500; color: var(--text-faint);
+    text-transform: uppercase; letter-spacing: 0.05em; text-align: right;
+    padding: 8px 10px; background: var(--surface2);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .tasks-table tbody td {
+    padding: 6px 8px; border-bottom: 0.5px solid var(--border);
+    vertical-align: middle;
+  }
+  .tasks-table tbody tr:last-child td { border-bottom: none; }
+  .th-check { width: 36px; text-align: center !important; }
+  .th-date { width: 152px; }
+  .th-del { width: 40px; }
   .task-check {
-    width: 19px; height: 19px; border-radius: 5px; flex-shrink: 0;
-    border: 1.5px solid var(--border-strong); background: var(--surface2);
+    width: 19px; height: 19px; border-radius: 5px; margin: 0 auto;
+    border: 1.5px solid var(--border-strong); background: var(--surface);
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; color: transparent; font-size: 12px;
   }
   .task-check.done { background: var(--teal); border-color: var(--teal); color: #fff; }
   .task-text {
-    flex: 1; min-width: 0; font-size: 13px; padding: 7px 11px;
-    border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm);
-    background: var(--surface2); color: var(--text); font-family: inherit;
+    width: 100%; font-size: 13px; padding: 7px 10px;
+    border: 0.5px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--text); font-family: inherit;
   }
   .task-text:focus { outline: none; border-color: rgba(0,0,0,0.35); }
   .task-text.done { text-decoration: line-through; color: var(--text-faint); }
   .task-date {
-    width: 138px; flex-shrink: 0; font-size: 12px; padding: 6px 8px;
-    border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm);
-    background: var(--surface2); color: var(--text-muted); font-family: inherit;
+    width: 100%; font-size: 12px; padding: 6px 8px;
+    border: 0.5px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--text-muted); font-family: inherit;
   }
   .task-date:focus { outline: none; border-color: rgba(0,0,0,0.35); }
   .task-date.overdue { color: #A32D2D; background: #FCEBEB; border-color: #F09595; }
   .task-del {
-    width: 26px; height: 26px; flex-shrink: 0; border: none; background: transparent;
+    width: 28px; height: 28px; border: none; background: transparent;
     color: var(--text-faint); cursor: pointer; font-size: 15px;
-    display: flex; align-items: center; justify-content: center; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center; border-radius: 6px; margin: 0 auto;
   }
   .task-del:hover { background: var(--surface2); color: #A32D2D; }
   .add-task {
     display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
-    color: #534AB7; padding: 6px 2px; cursor: pointer; margin-top: 2px;
+    color: #534AB7; padding: 8px 2px 0; cursor: pointer;
   }
   .add-task:hover { color: #3C3489; }
-  .tasks-empty { font-size: 12px; color: var(--text-faint); padding: 4px 2px 8px; }
+  .tasks-empty {
+    font-size: 12px; color: var(--text-faint); padding: 14px 2px;
+    text-align: center; border: 0.5px dashed var(--border); border-radius: var(--radius-sm);
+  }
 
   /* ── TASKS (on card) ── */
   .card-tasks { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-muted); }
@@ -746,23 +766,32 @@
   // ── TASK EDITING ──
   function renderTaskRows() {
     const list = document.getElementById('tasksList');
-    list.innerHTML = '';
     if (editingTasks.length === 0) {
       list.innerHTML = '<div class="tasks-empty">אין משימות עדיין — לחצי "הוסף משימה".</div>';
+      updateTasksCounter();
+      return;
     }
-    editingTasks.forEach((t, i) => {
-      const row = document.createElement('div');
-      row.className = 'task-row';
+    const rows = editingTasks.map((t, i) => {
       const overdue = isOverdue(t) ? ' overdue' : '';
-      row.innerHTML = `
-        <div class="task-check${t.done ? ' done' : ''}" onclick="toggleTask(${i})"><i class="ti ti-check"></i></div>
-        <input class="task-text${t.done ? ' done' : ''}" type="text" value="${escapeHtml(t.text)}"
-               placeholder="תיאור המשימה" oninput="updateTaskText(${i}, this.value)">
-        <input class="task-date${overdue}" type="date" value="${t.due}" onchange="updateTaskDate(${i}, this.value)">
-        <button class="task-del" onclick="deleteTask(${i})" title="מחק"><i class="ti ti-trash"></i></button>
-      `;
-      list.appendChild(row);
-    });
+      return `
+        <tr>
+          <td class="th-check"><div class="task-check${t.done ? ' done' : ''}" onclick="toggleTask(${i})"><i class="ti ti-check"></i></div></td>
+          <td><input class="task-text${t.done ? ' done' : ''}" type="text" value="${escapeHtml(t.text)}"
+                 placeholder="תיאור המשימה" oninput="updateTaskText(${i}, this.value)"></td>
+          <td><input class="task-date${overdue}" type="date" value="${t.due}" onchange="updateTaskDate(${i}, this.value)"></td>
+          <td><button class="task-del" onclick="deleteTask(${i})" title="מחק"><i class="ti ti-trash"></i></button></td>
+        </tr>`;
+    }).join('');
+    list.innerHTML = `
+      <table class="tasks-table">
+        <thead><tr>
+          <th class="th-check">✓</th>
+          <th>משימה</th>
+          <th class="th-date">תאריך יעד</th>
+          <th class="th-del"></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
     updateTasksCounter();
   }
 
