@@ -730,7 +730,7 @@
         <div class="card-meta">
           <div class="meta-row"><i class="ti ti-calendar"></i>${p.date}</div>
           <div class="meta-row"><i class="ti ti-world"></i>${p.display}</div>
-          ${rel ? `<div class="meta-row"><i class="ti ti-clock"></i>עודכן ${rel}</div>` : ''}
+          <div class="meta-row"><i class="ti ti-clock"></i>${rel ? 'עודכן ' + rel : 'טרם עודכן'}</div>
         </div>
         <a class="open-btn" href="${p.url}" target="_blank">
           <i class="ti ti-external-link"></i>פתח פרויקט
@@ -841,7 +841,7 @@
   function renderTaskRows() {
     const list = document.getElementById('tasksList');
     if (editingTasks.length === 0) {
-      list.innerHTML = '<div class="tasks-empty">אין משימות עדיין — לחצי "הוסף משימה".</div>';
+      list.innerHTML = '';
       updateTasksCounter();
       return;
     }
@@ -890,7 +890,7 @@
   function renderDepRows() {
     const list = document.getElementById('depsList');
     if (editingDeps.length === 0) {
-      list.innerHTML = '<div class="tasks-empty">אין תלויות — לחצי "הוסף תלות".</div>';
+      list.innerHTML = '';
       return;
     }
     const rows = editingDeps.map((d, i) => `
@@ -916,7 +916,7 @@
   function renderMileRows() {
     const list = document.getElementById('milesList');
     if (editingMiles.length === 0) {
-      list.innerHTML = '<div class="tasks-empty">אין אבני דרך — לחצי "הוסף אבן דרך".</div>';
+      list.innerHTML = '';
       updateMilesCounter();
       return;
     }
@@ -952,7 +952,7 @@
   function renderRiskRows() {
     const list = document.getElementById('risksList');
     if (editingRisks.length === 0) {
-      list.innerHTML = '<div class="tasks-empty">אין סיכונים — לחצי "הוסף סיכון".</div>';
+      list.innerHTML = '';
       return;
     }
     const rows = editingRisks.map((r, i) => {
