@@ -151,7 +151,7 @@
     position: fixed; top: 0; left: 0; height: 100%;
     background: var(--surface); border-left: 0.5px solid var(--border);
     box-shadow: 4px 0 24px rgba(0,0,0,0.10);
-    padding: 22px 30px 30px; width: 820px; max-width: 95vw;
+    padding: 22px 30px 0; width: 820px; max-width: 95vw;
     display: flex; flex-direction: column; gap: 18px;
     overflow-y: auto;
     transform: translateX(-100%); transition: transform 0.26s cubic-bezier(0.4,0,0.2,1);
@@ -176,20 +176,25 @@
   .status-pill.selected { border-color: rgba(0,0,0,0.3); }
   .date-input {
     width: 100%; font-size: 13px; padding: 8px 12px;
-    border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm);
-    background: var(--surface2); color: var(--text);
+    border: 0.5px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--text);
     font-family: inherit;
   }
   .date-input:focus { outline: none; border-color: rgba(0,0,0,0.35); }
-  .save-btn {
-    font-size: 13px; padding: 10px 0;
-    border-radius: var(--radius-sm); background: var(--text);
-    color: var(--surface); border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    font-family: inherit; font-weight: 500;
-    transition: opacity 0.15s;
+  .drawer-footer {
+    position: sticky; bottom: 0; margin: 16px -30px 0; padding: 14px 30px;
+    background: var(--surface); border-top: 0.5px solid var(--border);
+    display: flex; justify-content: flex-start; z-index: 5;
   }
-  .save-btn:hover { opacity: 0.85; }
+  .save-btn {
+    font-size: 13px; padding: 10px 28px;
+    border-radius: var(--radius-sm); background: var(--purple);
+    color: #fff; border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: inherit; font-weight: 500;
+    transition: background 0.15s;
+  }
+  .save-btn:hover { background: #6A60C9; }
 
   /* ── CARD: RAG / NOTE / PROGRESS ── */
   .card-title-row { display: flex; align-items: center; gap: 8px; }
@@ -211,20 +216,20 @@
   /* ── DRAWER: RAG / PROGRESS / NOTE ── */
   .rag-pills { display: flex; gap: 8px; }
   .rag-pill {
-    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-    font-size: 12px; padding: 8px 0; border-radius: var(--radius-sm);
-    cursor: pointer; border: 1.5px solid var(--border); background: var(--surface2);
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: 12px; padding: 7px 16px; border-radius: 20px;
+    cursor: pointer; border: 1px solid var(--border); background: var(--surface);
     transition: border-color 0.12s, background 0.12s;
   }
   .rag-pill .d { width: 9px; height: 9px; border-radius: 50%; }
-  .rag-pill.selected { border-color: rgba(0,0,0,0.35); background: var(--surface); }
+  .rag-pill.selected { border-color: var(--purple); background: var(--purple-light); }
   .progress-edit { display: flex; align-items: center; gap: 12px; }
   .progress-edit input[type=range] { flex: 1; accent-color: var(--purple); }
   .progress-val { font-size: 13px; font-weight: 500; min-width: 38px; text-align: left; }
   .note-input {
     width: 100%; font-size: 13px; padding: 9px 12px; line-height: 1.5;
-    border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm);
-    background: var(--surface2); color: var(--text);
+    border: 0.5px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--text);
     font-family: inherit; resize: vertical; min-height: 64px;
   }
   .note-input:focus { outline: none; border-color: rgba(0,0,0,0.35); }
@@ -498,14 +503,14 @@
     </div>
 
     <div class="tasks-section">
-      <div class="field-label"><span><i class="ti ti-arrow-ramp-right-2" style="font-size:14px;margin-left:5px"></i>תלויות</span></div>
+      <div class="field-label"><span>תלויות</span></div>
       <div id="depsList"></div>
       <div class="add-task" onclick="addDepRow()"><i class="ti ti-plus"></i>הוסף תלות</div>
     </div>
 
     <div class="tasks-section">
       <div class="field-label">
-        <span><i class="ti ti-flag" style="font-size:14px;margin-left:5px"></i>אבני דרך</span>
+        <span>אבני דרך</span>
         <span class="tasks-counter" id="milesCounter"></span>
       </div>
       <div id="milesList"></div>
@@ -513,14 +518,16 @@
     </div>
 
     <div class="tasks-section">
-      <div class="field-label"><span><i class="ti ti-alert-triangle" style="font-size:14px;margin-left:5px"></i>סיכונים</span></div>
+      <div class="field-label"><span>סיכונים</span></div>
       <div id="risksList"></div>
       <div class="add-task" onclick="addRiskRow()"><i class="ti ti-plus"></i>הוסף סיכון</div>
     </div>
 
-    <button class="save-btn" onclick="saveEdit()">
-      <i class="ti ti-check" style="font-size:14px"></i>שמור שינויים
-    </button>
+    <div class="drawer-footer">
+      <button class="save-btn" onclick="saveEdit()">
+        <i class="ti ti-check" style="font-size:14px"></i>שמור שינויים
+      </button>
+    </div>
   </div>
 </div>
 
